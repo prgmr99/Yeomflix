@@ -1,16 +1,21 @@
 import styled from "styled-components";
-import { Link, useMatch } from "react-router-dom";
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { Link, useMatch, useNavigate } from "react-router-dom";
+import { motion, useAnimation, useScroll } from "framer-motion";
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 
-const Nav = styled.nav`
+interface IForm {
+  keyword: string;
+}
+
+const Nav = styled(motion.nav)`
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: fixed;
   width: 100%;
   top: 0;
-  background-color: black;
+
   height: 8vh;
   font-size: 14px;
 `;
@@ -52,7 +57,7 @@ const Circle = styled(motion.span)`
   left: 0;
   right: 0;
 `;
-const Search = styled.span`
+const Search = styled.form`
   display: flex;
   position: relative;
   align-items: center;
@@ -66,6 +71,13 @@ const Input = styled(motion.input)`
   transform-origin: right center;
   position: absolute;
   left: -160px;
+  border-radius: 5px;
+  width: 700%;
+  height: 100%;
+  background-color: transparent;
+  color: ${(props) => props.theme.white};
+  padding: 5px 10px;
+  border: 1px solid white;
 `;
 
 const logoVarients = {
@@ -79,16 +91,53 @@ const logoVarients = {
     },
   },
 };
+const navVarients = {
+  up: {
+    backgroundColor: "rgba(0,0,0,0)",
+  },
+  scroll: {
+    backgroundColor: "rgba(0,0,0,1)",
+  },
+};
 
 function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const homeMatch = useMatch("/");
   const tvMatch = useMatch("tv");
+  const inputAnimation = useAnimation();
+  const navAnimation = useAnimation();
+  const navigate = useNavigate();
+  const { scrollY } = useScroll();
+  const { register, handleSubmit } = useForm<IForm>();
   const toggleSearch = () => {
+    if (searchOpen) {
+      // trigger the close animation
+      inputAnimation.start({
+        scaleX: 0,
+      });
+    } else {
+      // trigger the open animation
+      inputAnimation.start({
+        scaleX: 1,
+      });
+    }
     setSearchOpen((prev) => !prev);
   };
+  const onValid = (data: IForm) => {
+    navigate(`/search?keyword=${data.keyword}`);
+  };
+
+  useEffect(() => {
+    scrollY.onChange(() => {
+      if (scrollY.get() < 80) {
+        navAnimation.start("up");
+      } else {
+        navAnimation.start("scroll");
+      }
+    });
+  }, [scrollY, navAnimation]);
   return (
-    <Nav>
+    <Nav variants={navVarients} initial={"up"} animate={navAnimation}>
       <Column>
         <Logo
           variants={logoVarients}
@@ -116,7 +165,7 @@ function Header() {
         </Items>
       </Column>
       <Column>
-        <Search>
+        <Search onSubmit={handleSubmit(onValid)}>
           <motion.svg
             onClick={toggleSearch}
             animate={{ x: searchOpen ? -190 : 0 }}
@@ -132,7 +181,9 @@ function Header() {
             ></path>
           </motion.svg>
           <Input
-            animate={{ scaleX: searchOpen ? 1 : 0 }}
+            {...register("keyword", { required: true, minLength: 2 })}
+            initial={{ scaleX: 0 }}
+            animate={inputAnimation}
             transition={{ type: "linear" }}
             placeholder="Movie, Tv shows, ..."
           />
