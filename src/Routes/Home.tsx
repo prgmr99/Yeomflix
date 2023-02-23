@@ -1,10 +1,16 @@
 import styled from "styled-components";
 import { useState } from "react";
 import { useQuery } from "react-query";
-import { getMovies, IGetMoviesResult } from "../api";
+import {
+  getMovies,
+  IGetMoviesResult,
+  getTopMovies,
+  IGetTopMoviesResult,
+} from "../api";
 import { makeImgPath } from "../utils";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useNavigate, useMatch } from "react-router-dom";
+import Slider from "../Components/Slider";
 
 const Wrapper = styled.div`
   height: 200vh;
@@ -24,7 +30,7 @@ const Banner = styled.div<{ bgPhoto: string }>`
   justify-content: center;
   padding: 60px;
   padding-right: 900px;
-  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
+  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8)),
     url(${(props) => props.bgPhoto});
   background-size: cover;
 `;
@@ -35,9 +41,13 @@ const Title = styled.h1`
 const Overview = styled.p`
   font-size: 20px;
 `;
-const Slider = styled.div`
+const SliderNow = styled.div`
   position: relative;
   top: -100px;
+`;
+const SliderTop = styled.div`
+  position: relative;
+  top: 100px;
 `;
 const Row = styled(motion.div)`
   display: grid;
@@ -53,6 +63,7 @@ const Box = styled(motion.div)<{ bgPhoto: string }>`
   background-size: cover;
   background-position: center center;
   font-size: 30px;
+  border-radius: 5px;
   cursor: pointer;
   &:first-child {
     transform-origin: center left;
@@ -108,17 +119,67 @@ const MovieDetailOverview = styled.p`
   position: relative;
   top: -20px;
 `;
-const LeftBtn = styled.button`
-  left: 0px;
-  top: 10vh;
-
-  position: absolute;
-  z-index: 99;
-`;
-const RightBtn = styled.button`
+const RightBtn = styled(motion.button)`
   position: absolute;
   left: 96vw;
   top: 10vh;
+  background-color: rgba(200, 200, 200, 0.5);
+  border-radius: 50px;
+  font-size: 25px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.3;
+`;
+const Btn = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+const PlayBtn = styled(motion.button)`
+  margin-right: 10px;
+  position: relative;
+  display: inline-block;
+  width: 100px;
+  height: 40px;
+  top: 10px;
+  font-size: 20px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+`;
+const MoreInfoBtn = styled(motion.button)`
+  position: relative;
+  display: inline-block;
+  width: 150px;
+  height: 40px;
+  top: 10px;
+  font-size: 20px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+`;
+const SliderInfo = styled.span`
+  font-size: 25px;
+  margin-left: 10px;
+  margin-bottom: 5px;
+  font-weight: 500;
+`;
+const LikeBtn = styled(motion.button)`
+  position: relative;
+  top: -30px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: ${(props) => props.theme.white.darker};
+  border: 2px solid grey;
+  cursor: pointer;
+`;
+const BtnArea = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
 const rowVariants = {
@@ -159,51 +220,83 @@ const offset = 6;
 function Home() {
   const navigate = useNavigate();
   const bigMovieMatch = useMatch("/movies/:movieId");
-  const { data, isLoading } = useQuery<IGetMoviesResult>(
+  const { data: nowMovie, isLoading: nowLoading } = useQuery<IGetMoviesResult>(
     ["movies", "nowPlaying"],
     getMovies
   );
+  const { data: topMovie, isLoading: topLoading } =
+    useQuery<IGetTopMoviesResult>(["topmovies", "top"], getTopMovies);
   const [index, setIndex] = useState(0);
+  const [indexTop, setIndexTop] = useState(0);
   const [leaving, setLeaving] = useState(false);
+  const [leavingTop, setLeavingTop] = useState(false);
   const { scrollY } = useScroll();
   const [totalMovies, setTotalMovies] = useState(0);
+  const [totalTopMovies, setTotalTopMovies] = useState(0);
   const maxIndex = Math.floor((totalMovies as any) / offset) - 1;
-  const increaseIndex = () => {
-    if (data) {
+  const maxIndex0 = Math.floor((totalTopMovies as any) / offset) - 1;
+  const clickedMovie =
+    (bigMovieMatch?.params.movieId &&
+      nowMovie?.results.find(
+        (movie) => movie.id + "" === bigMovieMatch.params.movieId
+      )) ||
+    topMovie?.results.find(
+      (movie) => movie.id + "" === bigMovieMatch?.params.movieId
+    );
+
+  /**
+   * This helps slide to right by increasing index
+   * Probably I need to make this function, maxIndex, and totalState a new component
+   * @returns change states
+   */
+  const increaseIndexNow = () => {
+    if (nowMovie) {
       if (leaving) return;
       toggleLeaving();
-      setTotalMovies(data?.results.length - 1);
+      setTotalMovies(nowMovie?.results.length - 1);
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
+  const increaseIndexTop = () => {
+    if (topMovie) {
+      if (leavingTop) return;
+      toggleLeavingTop();
+      setTotalTopMovies(topMovie?.results.length - 1);
+      setIndexTop((prev) => (prev === maxIndex0 ? 0 : prev + 1));
+    }
+  };
   const toggleLeaving = () => setLeaving((prev) => !prev);
+  const toggleLeavingTop = () => setLeavingTop((prev) => !prev);
   const onBoxClicked = (movieId: number) => {
     navigate(`/movies/${movieId}`);
   };
   const onOverlayClicked = () => {
     navigate("/");
   };
-  const clickedMovie =
-    bigMovieMatch?.params.movieId &&
-    data?.results.find(
-      (movie) => movie.id + "" === bigMovieMatch.params.movieId
-    );
-  console.log(clickedMovie);
+
   return (
     <Wrapper>
-      {isLoading ? (
+      {nowLoading && topLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
           <Banner
-            onClick={increaseIndex}
-            bgPhoto={makeImgPath(data?.results[0].backdrop_path || "")}
+            bgPhoto={makeImgPath(nowMovie?.results[0].backdrop_path || "")}
           >
-            <Title>{data?.results[0].title}</Title>
-            <Overview>{data?.results[0].overview}</Overview>
+            <Title>{nowMovie?.results[0].title}</Title>
+            <Overview>{nowMovie?.results[0].overview}</Overview>
+            <Btn>
+              <PlayBtn>▶️ Play</PlayBtn>
+              <MoreInfoBtn
+                layoutId={nowMovie?.results[0].id + ""}
+                onClick={() => onBoxClicked(nowMovie?.results[0].id || 0)}
+              >
+                ⓘ More Info
+              </MoreInfoBtn>
+            </Btn>
           </Banner>
-          <Slider>
-            <LeftBtn>OO</LeftBtn>
+          <SliderNow>
+            <SliderInfo>Now playing</SliderInfo>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
                 variants={rowVariants}
@@ -213,7 +306,7 @@ function Home() {
                 transition={{ type: "tween", duration: 2 }}
                 key={index}
               >
-                {data?.results
+                {nowMovie?.results
                   .slice(1)
                   .slice(offset * index, offset * index + offset)
                   .map((movie) => (
@@ -234,9 +327,21 @@ function Home() {
                   ))}
               </Row>
             </AnimatePresence>
-            {index === maxIndex}
-            <RightBtn>OO</RightBtn>
-          </Slider>
+            <RightBtn
+              onClick={increaseIndexNow}
+              whileHover={{
+                scale: 1.2,
+                opacity: 1,
+                transition: { type: "tween", duration: 0.5 },
+              }}
+            >
+              ▶️
+            </RightBtn>
+          </SliderNow>
+          <SliderTop>
+            <SliderInfo>Top Rated</SliderInfo>
+            <Slider data={topMovie as IGetTopMoviesResult} />
+          </SliderTop>
           <AnimatePresence>
             {bigMovieMatch ? (
               <>
@@ -260,6 +365,12 @@ function Home() {
                         }}
                       />
                       <MovieDetailTitle>{clickedMovie.title}</MovieDetailTitle>
+                      <BtnArea>
+                        <LikeBtn>❤️</LikeBtn>
+                        <LikeBtn>저장</LikeBtn>
+                        <LikeBtn>리뷰</LikeBtn>
+                        <LikeBtn>평점</LikeBtn>
+                      </BtnArea>
                       <MovieDetailOverview>
                         {clickedMovie.overview}
                       </MovieDetailOverview>
