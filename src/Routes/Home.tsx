@@ -297,46 +297,7 @@ function Home() {
           </Banner>
           <SliderNow>
             <SliderInfo>Now playing</SliderInfo>
-            <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-              <Row
-                variants={rowVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                transition={{ type: "tween", duration: 2 }}
-                key={index}
-              >
-                {nowMovie?.results
-                  .slice(1)
-                  .slice(offset * index, offset * index + offset)
-                  .map((movie) => (
-                    <Box
-                      layoutId={movie.id + ""}
-                      key={movie.id}
-                      variants={boxVariants}
-                      initial="normal"
-                      whileHover="hover"
-                      transition={{ type: "tween" }}
-                      onClick={() => onBoxClicked(movie.id)}
-                      bgPhoto={makeImgPath(movie.backdrop_path, "w400")}
-                    >
-                      <Info variants={infoVariants}>
-                        <h4>{movie.title}</h4>
-                      </Info>
-                    </Box>
-                  ))}
-              </Row>
-            </AnimatePresence>
-            <RightBtn
-              onClick={increaseIndexNow}
-              whileHover={{
-                scale: 1.2,
-                opacity: 1,
-                transition: { type: "tween", duration: 0.5 },
-              }}
-            >
-              ▶️
-            </RightBtn>
+            <Slider data={nowMovie as IGetMoviesResult} />
           </SliderNow>
           <SliderTop>
             <SliderInfo>Top Rated</SliderInfo>
