@@ -49,41 +49,6 @@ const SliderTop = styled.div`
   position: relative;
   top: 100px;
 `;
-const Row = styled(motion.div)`
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 5px;
-  position: absolute;
-  width: 100%;
-`;
-const Box = styled(motion.div)<{ bgPhoto: string }>`
-  background-color: white;
-  height: 180px;
-  background-image: url(${(props) => props.bgPhoto});
-  background-size: cover;
-  background-position: center center;
-  font-size: 30px;
-  border-radius: 5px;
-  cursor: pointer;
-  &:first-child {
-    transform-origin: center left;
-  }
-  &:last-child {
-    transform-origin: center right;
-  }
-`;
-const Info = styled(motion.div)`
-  padding: 10px;
-  background-color: ${(props) => props.theme.black.lighter};
-  opacity: 0;
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-  h4 {
-    font-size: 15px;
-    text-align: center;
-  }
-`;
 const Overlay = styled(motion.div)`
   position: absolute;
   top: 0;
@@ -118,19 +83,6 @@ const MovieDetailOverview = styled.p`
   padding: 20px 20px;
   position: relative;
   top: -20px;
-`;
-const RightBtn = styled(motion.button)`
-  position: absolute;
-  left: 96vw;
-  top: 10vh;
-  background-color: rgba(200, 200, 200, 0.5);
-  border-radius: 50px;
-  font-size: 25px;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0.3;
 `;
 const Btn = styled.div`
   display: flex;
@@ -182,41 +134,6 @@ const BtnArea = styled.div`
   align-items: center;
 `;
 
-const rowVariants = {
-  hidden: {
-    x: window.outerWidth,
-  },
-  visible: {
-    x: 0,
-  },
-  exit: {
-    x: -window.outerWidth,
-  },
-};
-const boxVariants = {
-  normal: {
-    scale: 1,
-  },
-  hover: {
-    scale: 1.3,
-    y: -50,
-    transition: {
-      delay: 0.5,
-      type: "tween",
-    },
-  },
-};
-const infoVariants = {
-  hover: {
-    opacity: 1,
-    transition: {
-      delay: 0.5,
-      type: "tween",
-    },
-  },
-};
-const offset = 6;
-
 function Home() {
   const navigate = useNavigate();
   const bigMovieMatch = useMatch("/movies/:movieId");
@@ -226,15 +143,8 @@ function Home() {
   );
   const { data: topMovie, isLoading: topLoading } =
     useQuery<IGetTopMoviesResult>(["topmovies", "top"], getTopMovies);
-  const [index, setIndex] = useState(0);
-  const [indexTop, setIndexTop] = useState(0);
-  const [leaving, setLeaving] = useState(false);
-  const [leavingTop, setLeavingTop] = useState(false);
+
   const { scrollY } = useScroll();
-  const [totalMovies, setTotalMovies] = useState(0);
-  const [totalTopMovies, setTotalTopMovies] = useState(0);
-  const maxIndex = Math.floor((totalMovies as any) / offset) - 1;
-  const maxIndex0 = Math.floor((totalTopMovies as any) / offset) - 1;
   const clickedMovie =
     (bigMovieMatch?.params.movieId &&
       nowMovie?.results.find(
@@ -243,30 +153,6 @@ function Home() {
     topMovie?.results.find(
       (movie) => movie.id + "" === bigMovieMatch?.params.movieId
     );
-
-  /**
-   * This helps slide to right by increasing index
-   * Probably I need to make this function, maxIndex, and totalState a new component
-   * @returns change states
-   */
-  const increaseIndexNow = () => {
-    if (nowMovie) {
-      if (leaving) return;
-      toggleLeaving();
-      setTotalMovies(nowMovie?.results.length - 1);
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
-    }
-  };
-  const increaseIndexTop = () => {
-    if (topMovie) {
-      if (leavingTop) return;
-      toggleLeavingTop();
-      setTotalTopMovies(topMovie?.results.length - 1);
-      setIndexTop((prev) => (prev === maxIndex0 ? 0 : prev + 1));
-    }
-  };
-  const toggleLeaving = () => setLeaving((prev) => !prev);
-  const toggleLeavingTop = () => setLeavingTop((prev) => !prev);
   const onBoxClicked = (movieId: number) => {
     navigate(`/movies/${movieId}`);
   };

@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useMatch } from "react-router-dom";
 import { makeImgPath } from "../utils";
-import { IGetTopMoviesResult } from "../api";
+import { IGetTopMoviesResult, IGetTvOnAir } from "../api";
 
 const Slider0 = styled.div`
   position: relative;
@@ -98,7 +98,11 @@ const infoVariants = {
 };
 const offset = 6;
 
-function Slider({ data }: { data: IGetTopMoviesResult }) {
+function Slider({
+  data,
+}: { data: IGetTopMoviesResult } | { data: IGetTvOnAir }) {
+  const locateTV = useMatch("/tv/shows/:tvId");
+  const locateMovie = useMatch("/movie/:movieId");
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
@@ -107,7 +111,13 @@ function Slider({ data }: { data: IGetTopMoviesResult }) {
   const toggleLeaving = () => setLeaving((prev) => !prev);
 
   const onBoxClicked = (movieId: number) => {
+    // Tv shows에 맞는 변수도 필요함.
     navigate(`/movies/${movieId}`);
+    // hook 중에 나의 현재 위치를 알려주는 것이 있었다.
+    // 그것을 이용하여 조건문 만들기.
+  };
+  const onTvBoxClicked = (tvId: number) => {
+    navigate(`/tv/shows/${tvId}`);
   };
   const increaseIndexNow = () => {
     if (data) {
@@ -139,11 +149,15 @@ function Slider({ data }: { data: IGetTopMoviesResult }) {
                 initial="normal"
                 whileHover="hover"
                 transition={{ type: "tween" }}
-                onClick={() => onBoxClicked(movie.id)}
+                onClick={() => {
+                  onTvBoxClicked(movie.id);
+                }}
                 bgPhoto={makeImgPath(movie.backdrop_path, "w400")}
               >
                 <Info variants={infoVariants}>
-                  <h4>{movie.title}</h4>
+                  <h4>
+                    {(movie.title as string) || (movie.original_name as string)}
+                  </h4>
                 </Info>
               </Box>
             ))}
