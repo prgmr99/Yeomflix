@@ -41,10 +41,6 @@ const SliderNow = styled.div`
   position: relative;
   top: -100px;
 `;
-const SliderTop = styled.div`
-  position: relative;
-  top: 100px;
-`;
 const Overlay = styled(motion.div)`
   position: absolute;
   top: 0;

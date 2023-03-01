@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useNavigate, useMatch, useLocation } from "react-router-dom";
 import { makeImgPath } from "../utils";
 import { IGetTopMoviesResult, IGetTvOnAir } from "../api";
-import Flicking from "@egjs/flicking";
 import { useRecoilValue } from "recoil";
 import { keywordState } from "../atom";
 
@@ -25,7 +24,7 @@ const Box = styled(motion.div)<{ bgPhoto: string }>`
   background-size: cover;
   background-position: center center;
   font-size: 30px;
-  border-radius: 5px;
+  border-radius: 7px;
   cursor: pointer;
   &:first-child {
     transform-origin: center left;
@@ -46,16 +45,10 @@ const Info = styled(motion.div)`
     text-align: center;
   }
 `;
-const SliderInfo = styled.span`
-  font-size: 25px;
-  margin-left: 10px;
-  margin-bottom: 5px;
-  font-weight: 500;
-`;
 const RightBtn = styled(motion.button)`
   position: absolute;
   left: 96vw;
-  top: 14vh;
+  top: 10vh;
   background-color: rgba(200, 200, 200, 0.5);
   border-radius: 50px;
   font-size: 25px;
@@ -67,8 +60,8 @@ const RightBtn = styled(motion.button)`
 `;
 const LeftBtn = styled(motion.button)`
   position: absolute;
-  left: 0vw;
-  top: 14vh;
+  left: 0.5vw;
+  top: 10vh;
   background-color: rgba(200, 200, 200, 0.5);
   border-radius: 50px;
   font-size: 25px;
@@ -80,28 +73,6 @@ const LeftBtn = styled(motion.button)`
   z-index: 1;
 `;
 
-const rowVariants = {
-  hidden: {
-    x: window.outerWidth,
-  },
-  visible: {
-    x: 0,
-  },
-  exit: {
-    x: -window.outerWidth,
-  },
-};
-const revRowVariants = {
-  hidden: {
-    x: -window.outerWidth,
-  },
-  visible: {
-    x: 0,
-  },
-  exit: {
-    x: window.outerWidth,
-  },
-};
 const boxVariants = {
   normal: {
     scale: 1,
@@ -132,16 +103,24 @@ function Slider({
   const navigate = useNavigate();
   const location = useLocation();
   const query = useRecoilValue(keywordState);
-  const movieMatch = useMatch("/movies/:movieId");
-  const tvMatch = useMatch("/tv/shows/:tvId");
-  const searchMatch = useMatch(`/search?query=${query}/:movieId`);
   const [index, setIndex] = useState(0);
-  const [which, setWhich] = useState(false);
+  const [back, setBack] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [totalMovies, setTotalMovies] = useState(0);
   const maxIndex = Math.floor((totalMovies as any) / offset) - 1;
   const toggleLeaving = () => setLeaving((prev) => !prev);
   const toggleLeavingL = () => setLeaving((prev) => !prev);
+  const rowVariants = {
+    hidden: (back: boolean) => ({
+      x: back ? -window.outerWidth - 5 : window.outerWidth + 5,
+    }),
+    visible: {
+      x: 0,
+    },
+    exit: (back: boolean) => ({
+      x: back ? window.outerWidth + 5 : -window.outerWidth - 5,
+    }),
+  };
   const whichBoxClicked = (movieId: number) => {
     if (location?.pathname === "/") {
       onBoxClicked(movieId);
@@ -165,7 +144,7 @@ function Slider({
   const increaseIndex = () => {
     if (data) {
       if (leaving) return;
-      setWhich(false);
+      setBack(false);
       toggleLeaving();
       setTotalMovies(data?.results.length - 1);
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
@@ -174,12 +153,11 @@ function Slider({
   const decreaseIndex = () => {
     if (data) {
       if (leaving) return;
-      setWhich(true);
+      setBack(true);
       toggleLeavingL();
       setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
     }
   };
-  console.log(tvMatch);
   return (
     <Slider0>
       <LeftBtn
@@ -192,9 +170,14 @@ function Slider({
       >
         ◀︎
       </LeftBtn>
-      <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+      <AnimatePresence
+        custom={back}
+        initial={false}
+        onExitComplete={toggleLeaving}
+      >
         <Row
-          variants={which ? revRowVariants : rowVariants}
+          custom={back}
+          variants={rowVariants}
           initial="hidden"
           animate="visible"
           exit="exit"
