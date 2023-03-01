@@ -1,10 +1,9 @@
 import styled from "styled-components";
-import { useState } from "react";
 import { useQuery } from "react-query";
 import { IGetTvOnAir, getTvOnAir, getTopTvs } from "../api";
 import { makeImgPath } from "../utils";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
-import { useNavigate, useMatch } from "react-router-dom";
+import { useNavigate, useMatch, useLocation } from "react-router-dom";
 import Slider from "../Components/Slider";
 
 const Wrapper = styled.div`
@@ -151,7 +150,6 @@ function Home() {
   const onOverlayClicked = () => {
     navigate("/tv");
   };
-
   return (
     <Wrapper>
       {airLoading && topLoading ? (

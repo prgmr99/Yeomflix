@@ -1,9 +1,12 @@
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { useNavigate, useMatch } from "react-router-dom";
+import { useNavigate, useMatch, useLocation } from "react-router-dom";
 import { makeImgPath } from "../utils";
 import { IGetTopMoviesResult, IGetTvOnAir } from "../api";
+import Flicking from "@egjs/flicking";
+import { useRecoilValue } from "recoil";
+import { keywordState } from "../atom";
 
 const Slider0 = styled.div`
   position: relative;
@@ -127,22 +130,37 @@ function Slider({
   data,
 }: { data: IGetTopMoviesResult } | { data: IGetTvOnAir }) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const query = useRecoilValue(keywordState);
+  const movieMatch = useMatch("/movies/:movieId");
+  const tvMatch = useMatch("/tv/shows/:tvId");
+  const searchMatch = useMatch(`/search?query=${query}/:movieId`);
   const [index, setIndex] = useState(0);
   const [which, setWhich] = useState(false);
   const [leaving, setLeaving] = useState(false);
-  const [leavingL, setLeavingL] = useState(false);
   const [totalMovies, setTotalMovies] = useState(0);
   const maxIndex = Math.floor((totalMovies as any) / offset) - 1;
   const toggleLeaving = () => setLeaving((prev) => !prev);
   const toggleLeavingL = () => setLeaving((prev) => !prev);
+  const whichBoxClicked = (movieId: number) => {
+    if (location?.pathname === "/") {
+      onBoxClicked(movieId);
+    }
+    if (location?.pathname === "/tv") {
+      onTvBoxClicked(movieId);
+    }
+    if (location?.pathname === "/search") {
+      onSearchBoxClicked(movieId);
+    }
+  };
   const onBoxClicked = (movieId: number) => {
-    // Tv shows에 맞는 변수도 필요함.
     navigate(`/movies/${movieId}`);
-    // hook 중에 나의 현재 위치를 알려주는 것이 있었다.
-    // 그것을 이용하여 조건문 만들기.
   };
   const onTvBoxClicked = (tvId: number) => {
     navigate(`/tv/shows/${tvId}`);
+  };
+  const onSearchBoxClicked = (movieId: number) => {
+    navigate(`/search?query=${query}/${movieId}`);
   };
   const increaseIndex = () => {
     if (data) {
@@ -161,6 +179,7 @@ function Slider({
       setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
     }
   };
+  console.log(tvMatch);
   return (
     <Slider0>
       <LeftBtn
@@ -171,7 +190,7 @@ function Slider({
           transition: { type: "tween", duration: 0.5 },
         }}
       >
-        Click!
+        ◀︎
       </LeftBtn>
       <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
         <Row
@@ -194,7 +213,7 @@ function Slider({
                 whileHover="hover"
                 transition={{ type: "tween" }}
                 onClick={() => {
-                  onTvBoxClicked(movie.id);
+                  whichBoxClicked(movie.id);
                 }}
                 bgPhoto={makeImgPath(movie.backdrop_path, "w400")}
               >
