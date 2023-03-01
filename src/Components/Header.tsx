@@ -3,9 +3,11 @@ import { Link, useMatch, useNavigate } from "react-router-dom";
 import { motion, useAnimation, useScroll } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useRecoilState } from "recoil";
+import { keywordState } from "../atom";
 
 interface IForm {
-  keyword: string;
+  query: string;
 }
 
 const Nav = styled(motion.nav)`
@@ -101,6 +103,7 @@ const navVarients = {
 };
 
 function Header() {
+  const [keyword, setKeyword] = useRecoilState(keywordState);
   const [searchOpen, setSearchOpen] = useState(false);
   const homeMatch = useMatch("/");
   const tvMatch = useMatch("tv");
@@ -124,7 +127,8 @@ function Header() {
     setSearchOpen((prev) => !prev);
   };
   const onValid = (data: IForm) => {
-    navigate(`/search?keyword=${data.keyword}`);
+    setKeyword(data.query);
+    navigate(`/search?query=${data.query}`);
   };
 
   useEffect(() => {
@@ -136,6 +140,7 @@ function Header() {
       }
     });
   }, [scrollY, navAnimation]);
+
   return (
     <Nav variants={navVarients} initial={"up"} animate={navAnimation}>
       <Column>
@@ -181,11 +186,13 @@ function Header() {
             ></path>
           </motion.svg>
           <Input
-            {...register("keyword", { required: true, minLength: 2 })}
+            {...register("query", { required: true, minLength: 2 })}
             initial={{ scaleX: 0 }}
             animate={inputAnimation}
             transition={{ type: "linear" }}
             placeholder="Movie, Tv shows, ..."
+            autoComplete="off"
+            type="text"
           />
         </Search>
       </Column>

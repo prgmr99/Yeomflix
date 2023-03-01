@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { useState } from "react";
 import { useQuery } from "react-query";
 import {
   getMovies,
@@ -143,7 +142,6 @@ function Home() {
   );
   const { data: topMovie, isLoading: topLoading } =
     useQuery<IGetTopMoviesResult>(["topmovies", "top"], getTopMovies);
-
   const { scrollY } = useScroll();
   const clickedMovie =
     (bigMovieMatch?.params.movieId &&

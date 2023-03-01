@@ -1,5 +1,8 @@
-const API_KEY = "28480f953401db60e553e41284f5f407";
-const BASE_PATH = "https://api.themoviedb.org/3";
+import { useRecoilValue } from "recoil";
+import { keywordState } from "./atom";
+
+export const API_KEY = "28480f953401db60e553e41284f5f407";
+export const BASE_PATH = "https://api.themoviedb.org/3";
 
 interface IMovie {
   id: number;
@@ -68,4 +71,10 @@ export function getTopTvs() {
   return fetch(`${BASE_PATH}/tv/top_rated?api_key=${API_KEY}`).then(
     (response) => response.json()
   );
+}
+
+export function GetSearchData(keyword: string) {
+  return fetch(
+    `${BASE_PATH}/search/movie?api_key=${API_KEY}&query=${keyword}`
+  ).then((response) => response.json());
 }

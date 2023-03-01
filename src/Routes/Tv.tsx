@@ -140,7 +140,6 @@ function Home() {
     ["topTvs", "topLoading"],
     getTopTvs
   );
-
   const { scrollY } = useScroll();
   const clickedMovie =
     (bigTvMatch?.params.tvId &&
@@ -164,12 +163,16 @@ function Home() {
             <Overview>{airTv?.results[0].overview}</Overview>
             <Btn>
               <PlayBtn>▶️ Play</PlayBtn>
-              <MoreInfoBtn
-                layoutId={airTv?.results[0].id + ""}
-                onClick={() => onBoxClicked(airTv?.results[0].id || 0)}
-              >
-                ⓘ More Info
-              </MoreInfoBtn>
+              {airTv ? (
+                <MoreInfoBtn
+                  layoutId={airTv?.results[0].id + ""}
+                  onClick={() => onBoxClicked(+airTv?.results[0].id)}
+                >
+                  ⓘ More Info
+                </MoreInfoBtn>
+              ) : (
+                <MoreInfoBtn>ⓘ More Info</MoreInfoBtn>
+              )}
             </Btn>
           </Banner>
           <SliderNow>

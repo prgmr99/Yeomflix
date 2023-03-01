@@ -52,7 +52,7 @@ const SliderInfo = styled.span`
 const RightBtn = styled(motion.button)`
   position: absolute;
   left: 96vw;
-  top: 10vh;
+  top: 14vh;
   background-color: rgba(200, 200, 200, 0.5);
   border-radius: 50px;
   font-size: 25px;
@@ -61,6 +61,20 @@ const RightBtn = styled(motion.button)`
   justify-content: center;
   align-items: center;
   opacity: 0.3;
+`;
+const LeftBtn = styled(motion.button)`
+  position: absolute;
+  left: 0vw;
+  top: 14vh;
+  background-color: rgba(200, 200, 200, 0.5);
+  border-radius: 50px;
+  font-size: 25px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.3;
+  z-index: 1;
 `;
 
 const rowVariants = {
@@ -72,6 +86,17 @@ const rowVariants = {
   },
   exit: {
     x: -window.outerWidth,
+  },
+};
+const revRowVariants = {
+  hidden: {
+    x: -window.outerWidth,
+  },
+  visible: {
+    x: 0,
+  },
+  exit: {
+    x: window.outerWidth,
   },
 };
 const boxVariants = {
@@ -101,15 +126,15 @@ const offset = 6;
 function Slider({
   data,
 }: { data: IGetTopMoviesResult } | { data: IGetTvOnAir }) {
-  const locateTV = useMatch("/tv/shows/:tvId");
-  const locateMovie = useMatch("/movie/:movieId");
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
+  const [which, setWhich] = useState(false);
   const [leaving, setLeaving] = useState(false);
+  const [leavingL, setLeavingL] = useState(false);
   const [totalMovies, setTotalMovies] = useState(0);
   const maxIndex = Math.floor((totalMovies as any) / offset) - 1;
   const toggleLeaving = () => setLeaving((prev) => !prev);
-
+  const toggleLeavingL = () => setLeaving((prev) => !prev);
   const onBoxClicked = (movieId: number) => {
     // Tv shows에 맞는 변수도 필요함.
     navigate(`/movies/${movieId}`);
@@ -119,19 +144,38 @@ function Slider({
   const onTvBoxClicked = (tvId: number) => {
     navigate(`/tv/shows/${tvId}`);
   };
-  const increaseIndexNow = () => {
+  const increaseIndex = () => {
     if (data) {
       if (leaving) return;
+      setWhich(false);
       toggleLeaving();
       setTotalMovies(data?.results.length - 1);
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
+  const decreaseIndex = () => {
+    if (data) {
+      if (leaving) return;
+      setWhich(true);
+      toggleLeavingL();
+      setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
+    }
+  };
   return (
     <Slider0>
+      <LeftBtn
+        onClick={decreaseIndex}
+        whileHover={{
+          scale: 1.2,
+          opacity: 1,
+          transition: { type: "tween", duration: 0.5 },
+        }}
+      >
+        Click!
+      </LeftBtn>
       <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
         <Row
-          variants={rowVariants}
+          variants={which ? revRowVariants : rowVariants}
           initial="hidden"
           animate="visible"
           exit="exit"
@@ -164,7 +208,7 @@ function Slider({
         </Row>
       </AnimatePresence>
       <RightBtn
-        onClick={increaseIndexNow}
+        onClick={increaseIndex}
         whileHover={{
           scale: 1.2,
           opacity: 1,
