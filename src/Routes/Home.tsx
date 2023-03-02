@@ -5,11 +5,16 @@ import {
   IGetMoviesResult,
   getTopMovies,
   IGetTopMoviesResult,
+  getVideoMovie,
+  IGetVideo,
 } from "../api";
 import { makeImgPath } from "../utils";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useNavigate, useMatch } from "react-router-dom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { idState } from "../atom";
 import Slider from "../Components/Slider";
+import Banner from "../Components/Banner";
 
 const Wrapper = styled.div`
   height: 200vh;
@@ -21,24 +26,6 @@ const Loader = styled.div`
   text-align: center;
   justify-content: center;
   align-items: center;
-`;
-const Banner = styled.div<{ bgPhoto: string }>`
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 60px;
-  padding-right: 900px;
-  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8)),
-    url(${(props) => props.bgPhoto});
-  background-size: cover;
-`;
-const Title = styled.h1`
-  font-size: 58px;
-  margin-bottom: 20px;
-`;
-const Overview = styled.p`
-  font-size: 20px;
 `;
 const SliderNow = styled.div`
   position: relative;
@@ -83,33 +70,6 @@ const MovieDetailOverview = styled.p`
   position: relative;
   top: -20px;
 `;
-const Btn = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-const PlayBtn = styled(motion.button)`
-  margin-right: 10px;
-  position: relative;
-  display: inline-block;
-  width: 100px;
-  height: 40px;
-  top: 10px;
-  font-size: 20px;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-`;
-const MoreInfoBtn = styled(motion.button)`
-  position: relative;
-  display: inline-block;
-  width: 150px;
-  height: 40px;
-  top: 10px;
-  font-size: 20px;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-`;
 const SliderInfo = styled.span`
   font-size: 25px;
   margin-left: 10px;
@@ -135,6 +95,7 @@ const BtnArea = styled.div`
 
 function Home() {
   const navigate = useNavigate();
+  const { scrollY } = useScroll();
   const bigMovieMatch = useMatch("/movies/:movieId");
   const { data: nowMovie, isLoading: nowLoading } = useQuery<IGetMoviesResult>(
     ["movies", "nowPlaying"],
@@ -142,7 +103,6 @@ function Home() {
   );
   const { data: topMovie, isLoading: topLoading } =
     useQuery<IGetTopMoviesResult>(["topmovies", "top"], getTopMovies);
-  const { scrollY } = useScroll();
   const clickedMovie =
     (bigMovieMatch?.params.movieId &&
       nowMovie?.results.find(
@@ -151,34 +111,17 @@ function Home() {
     topMovie?.results.find(
       (movie) => movie.id + "" === bigMovieMatch?.params.movieId
     );
-  const onBoxClicked = (movieId: number) => {
-    navigate(`/movies/${movieId}`);
-  };
   const onOverlayClicked = () => {
     navigate("/");
   };
-
+  console.log(bigMovieMatch?.params.movieId);
   return (
     <Wrapper>
       {nowLoading && topLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <Banner
-            bgPhoto={makeImgPath(nowMovie?.results[0].backdrop_path || "")}
-          >
-            <Title>{nowMovie?.results[0].title}</Title>
-            <Overview>{nowMovie?.results[0].overview}</Overview>
-            <Btn>
-              <PlayBtn>▶️ Play</PlayBtn>
-              <MoreInfoBtn
-                layoutId={nowMovie?.results[0].id + ""}
-                onClick={() => onBoxClicked(nowMovie?.results[0].id || 0)}
-              >
-                ⓘ More Info
-              </MoreInfoBtn>
-            </Btn>
-          </Banner>
+          <Banner data={nowMovie} category="movie" />
           <SliderNow>
             <SliderInfo>Now playing</SliderInfo>
             <Slider data={nowMovie as IGetMoviesResult} />

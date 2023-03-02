@@ -8,3 +8,9 @@ export const keywordState = atom({
   default: "",
   effects_UNSTABLE: [persistAtom],
 });
+
+export const idState = atom({
+  key: "id",
+  default: 0,
+  effects_UNSTABLE: [persistAtom],
+});

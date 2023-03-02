@@ -193,6 +193,7 @@ function Header() {
             placeholder="Movie, Tv shows, ..."
             autoComplete="off"
             type="text"
+            style={{ color: "white" }}
           />
         </Search>
       </Column>

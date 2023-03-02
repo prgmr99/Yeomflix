@@ -4,9 +4,10 @@ import { useLocation, useNavigate, useMatch } from "react-router-dom";
 import { useQuery } from "react-query";
 import { useRecoilValue } from "recoil";
 import { keywordState } from "../atom";
-import { GetSearchData, IGetMoviesResult } from "../api";
+import { getSearchData, IGetMoviesResult } from "../api";
 import { makeImgPath } from "../utils";
 import Slider from "../Components/Slider";
+import SearchBanner from "../Components/SearchBanner";
 
 const Wrapper = styled.div`
   height: 200vh;
@@ -18,24 +19,6 @@ const Loader = styled.div`
   text-align: center;
   justify-content: center;
   align-items: center;
-`;
-const Banner = styled.div<{ bgPhoto: string }>`
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 60px;
-  padding-right: 900px;
-  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8)),
-    url(${(props) => props.bgPhoto});
-  background-size: cover;
-`;
-const Title = styled.h1`
-  font-size: 58px;
-  margin-bottom: 20px;
-`;
-const Overview = styled.p`
-  font-size: 20px;
 `;
 const SliderNow = styled.div`
   position: relative;
@@ -76,33 +59,6 @@ const MovieDetailOverview = styled.p`
   position: relative;
   top: -20px;
 `;
-const Btn = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-const PlayBtn = styled(motion.button)`
-  margin-right: 10px;
-  position: relative;
-  display: inline-block;
-  width: 100px;
-  height: 40px;
-  top: 10px;
-  font-size: 20px;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-`;
-const MoreInfoBtn = styled(motion.button)`
-  position: relative;
-  display: inline-block;
-  width: 150px;
-  height: 40px;
-  top: 10px;
-  font-size: 20px;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-`;
 const SliderInfo = styled.span`
   font-size: 25px;
   margin-left: 10px;
@@ -132,55 +88,39 @@ function Search() {
   const query = useRecoilValue(keywordState);
   const bigMovieMatch = useMatch(`/search?query=${query}/:movieId`);
   const keyword = new URLSearchParams(location.search).get("query");
-  const { data, isLoading, error } = useQuery<IGetMoviesResult>(
-    ["keywords", query],
-    () => GetSearchData(keyword as string),
-    {
-      enabled: !!query,
-    }
+  const {
+    data: searchData,
+    isLoading: searchLoading,
+    error,
+  } = useQuery<IGetMoviesResult>(["keywords", query], () =>
+    getSearchData(keyword as string)
   );
   console.log(query);
   const { scrollY } = useScroll();
   const clickedMovie =
     bigMovieMatch?.params.movieId &&
-    data?.results.find(
+    searchData?.results.find(
       (movie: any) => movie.id + "" === bigMovieMatch.params.movieId
     );
-  const onBoxClicked = (movieId: number) => {
-    navigate(`/search?query=${keyword}/${movieId}`);
-  };
-  if (error) {
-    console.error(error);
-  }
-  if (!data) {
-    console.log("no data");
-  }
   const onOverlayClicked = () => {
-    navigate(`/search?query=${keyword}`);
+    navigate(`/search?query=${query}`);
   };
-  console.log(data);
+  console.log(bigMovieMatch?.params.movieId);
+  console.log(searchData);
   return (
     <Wrapper>
-      {isLoading ? (
+      {searchLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <Banner bgPhoto={makeImgPath(data?.results[0].backdrop_path || "")}>
-            <Title>{data?.results[0].title}</Title>
-            <Overview>{data?.results[0].overview}</Overview>
-            <Btn>
-              <PlayBtn>▶️ Play</PlayBtn>
-              <MoreInfoBtn
-                layoutId={data?.results[0].id + ""}
-                onClick={() => onBoxClicked(data?.results[0].id || 0)}
-              >
-                ⓘ More Info
-              </MoreInfoBtn>
-            </Btn>
-          </Banner>
+          <SearchBanner
+            data={searchData}
+            category="search"
+            keyword={keyword as string}
+          />
           <SliderNow>
             <SliderInfo>Related Movies</SliderInfo>
-            <Slider data={data as IGetMoviesResult} />
+            <Slider data={searchData as IGetMoviesResult} />
           </SliderNow>
           <AnimatePresence>
             {bigMovieMatch ? (

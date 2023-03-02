@@ -160,16 +160,19 @@ function Slider({
   };
   return (
     <Slider0>
-      <LeftBtn
-        onClick={decreaseIndex}
-        whileHover={{
-          scale: 1.2,
-          opacity: 1,
-          transition: { type: "tween", duration: 0.5 },
-        }}
-      >
-        ◀︎
-      </LeftBtn>
+      {" "}
+      {index === 0 ? null : (
+        <LeftBtn
+          onClick={decreaseIndex}
+          whileHover={{
+            scale: 1.2,
+            opacity: 1,
+            transition: { type: "tween", duration: 0.5 },
+          }}
+        >
+          ◀︎
+        </LeftBtn>
+      )}
       <AnimatePresence
         custom={back}
         initial={false}
@@ -209,16 +212,18 @@ function Slider({
             ))}
         </Row>
       </AnimatePresence>
-      <RightBtn
-        onClick={increaseIndex}
-        whileHover={{
-          scale: 1.2,
-          opacity: 1,
-          transition: { type: "tween", duration: 0.5 },
-        }}
-      >
-        ▶️
-      </RightBtn>
+      {index === maxIndex ? null : (
+        <RightBtn
+          onClick={increaseIndex}
+          whileHover={{
+            scale: 1.2,
+            opacity: 1,
+            transition: { type: "tween", duration: 0.5 },
+          }}
+        >
+          ▶️
+        </RightBtn>
+      )}
     </Slider0>
   );
 }

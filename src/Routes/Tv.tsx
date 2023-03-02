@@ -5,6 +5,7 @@ import { makeImgPath } from "../utils";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useNavigate, useMatch, useLocation } from "react-router-dom";
 import Slider from "../Components/Slider";
+import TvBanner from "../Components/TvBanner";
 
 const Wrapper = styled.div`
   height: 200vh;
@@ -16,17 +17,6 @@ const Loader = styled.div`
   text-align: center;
   justify-content: center;
   align-items: center;
-`;
-const Banner = styled.div<{ bgPhoto: string }>`
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 60px;
-  padding-right: 900px;
-  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8)),
-    url(${(props) => props.bgPhoto});
-  background-size: cover;
 `;
 const Title = styled.h1`
   font-size: 58px;
@@ -144,9 +134,6 @@ function Home() {
     (bigTvMatch?.params.tvId &&
       airTv?.results.find((tv) => tv.id + "" === bigTvMatch.params.tvId)) ||
     topTv?.results.find((tv) => tv.id + "" === bigTvMatch?.params.tvId);
-  const onBoxClicked = (tvId: number) => {
-    navigate(`/tv/shows/${tvId}`);
-  };
   const onOverlayClicked = () => {
     navigate("/tv");
   };
@@ -156,23 +143,7 @@ function Home() {
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <Banner bgPhoto={makeImgPath(airTv?.results[0].backdrop_path || "")}>
-            <Title>{airTv?.results[0].original_name}</Title>
-            <Overview>{airTv?.results[0].overview}</Overview>
-            <Btn>
-              <PlayBtn>▶️ Play</PlayBtn>
-              {airTv ? (
-                <MoreInfoBtn
-                  layoutId={airTv?.results[0].id + ""}
-                  onClick={() => onBoxClicked(+airTv?.results[0].id)}
-                >
-                  ⓘ More Info
-                </MoreInfoBtn>
-              ) : (
-                <MoreInfoBtn>ⓘ More Info</MoreInfoBtn>
-              )}
-            </Btn>
-          </Banner>
+          <TvBanner data={airTv} category="tv" />
           <SliderNow>
             <SliderInfo>Now playing</SliderInfo>
             <Slider data={airTv as IGetTvOnAir} />
