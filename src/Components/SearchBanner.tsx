@@ -69,13 +69,14 @@ const PlayBtn = styled(motion.button)`
 function SearchBanner({ data, category, keyword }: ISearchBanner) {
   const navigate = useNavigate();
   const onBoxClicked = (movieId: number) => {
-    navigate(`/search?query=${keyword}/${movieId}`);
+    navigate(`/search/query=${keyword}/${movieId}`);
   };
   const { data: movieVideo, isLoading: videoLoading } = useQuery<IGetVideo>(
     ["movieVideo", `video_${data?.results[0].id}`],
     () => getVideoMovie(data?.results[0].id)
   );
-  console.log(data);
+  /* console.log(keyword);
+  console.log(data); */
   return (
     <BannerWrap bgPhoto={makeImgPath(data?.results[0].backdrop_path || "")}>
       <Title>{data?.results[0].title}</Title>
@@ -89,7 +90,7 @@ function SearchBanner({ data, category, keyword }: ISearchBanner) {
           ⓘ More Info
         </MoreInfoBtn>
       </Btn>
-      {category === "category" && videoLoading ? (
+      {category === "search" && videoLoading ? (
         <Loader>Loading...</Loader>
       ) : movieVideo?.results.length === 0 ? null : (
         <Youtube

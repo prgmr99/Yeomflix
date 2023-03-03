@@ -1,12 +1,10 @@
 import styled from "styled-components";
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { makeImgPath } from "../utils";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import { IGetVideo, getVideoTv } from "../api";
 import Youtube from "react-youtube";
-import ReactPlayer from "react-player";
 
 interface ITvBanner {
   data: any;

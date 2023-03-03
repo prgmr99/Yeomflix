@@ -84,26 +84,23 @@ const BtnArea = styled.div`
 
 function Search() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const query = useRecoilValue(keywordState);
-  const bigMovieMatch = useMatch(`/search?query=${query}/:movieId`);
-  const keyword = new URLSearchParams(location.search).get("query");
-  const {
-    data: searchData,
-    isLoading: searchLoading,
-    error,
-  } = useQuery<IGetMoviesResult>(["keywords", query], () =>
-    getSearchData(keyword as string)
-  );
-  console.log(query);
   const { scrollY } = useScroll();
+  const query = useRecoilValue(keywordState);
+  const bigMovieMatch = useMatch(`/search/query=${query}/:movieId`);
+  //const location = useLocation();
+  //const keyword = new URLSearchParams(location.search).get("query");
+  const { data: searchData, isLoading: searchLoading } =
+    useQuery<IGetMoviesResult>(["keywords", "query"], () =>
+      getSearchData(query)
+    );
+  //console.log(query);
   const clickedMovie =
     bigMovieMatch?.params.movieId &&
     searchData?.results.find(
-      (movie: any) => movie.id + "" === bigMovieMatch.params.movieId
+      (movie) => movie.id + "" === bigMovieMatch.params.movieId
     );
   const onOverlayClicked = () => {
-    navigate(`/search?query=${query}`);
+    navigate(`/search`);
   };
   console.log(bigMovieMatch?.params.movieId);
   console.log(searchData);
@@ -116,7 +113,7 @@ function Search() {
           <SearchBanner
             data={searchData}
             category="search"
-            keyword={keyword as string}
+            keyword={query as string}
           />
           <SliderNow>
             <SliderInfo>Related Movies</SliderInfo>

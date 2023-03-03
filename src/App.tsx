@@ -9,7 +9,6 @@ import { keywordState } from "./atom";
 
 function App() {
   const query = useRecoilValue(keywordState);
-  console.log(query);
   return (
     <Router>
       <Header />
@@ -19,7 +18,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/movies/:id" element={<Home />} />
         <Route path="/tv/shows/:id" element={<Tv />} />
-        <Route path={`/search/${query}/:id`} element={<Search />} />
+        <Route path={`/search/query=${query}/:id`} element={<Search />} />
       </Routes>
     </Router>
   );

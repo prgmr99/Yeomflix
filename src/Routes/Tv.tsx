@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import { IGetTvOnAir, getTvOnAir, getTopTvs } from "../api";
 import { makeImgPath } from "../utils";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
-import { useNavigate, useMatch, useLocation } from "react-router-dom";
+import { useNavigate, useMatch } from "react-router-dom";
 import Slider from "../Components/Slider";
 import TvBanner from "../Components/TvBanner";
 
@@ -17,13 +17,6 @@ const Loader = styled.div`
   text-align: center;
   justify-content: center;
   align-items: center;
-`;
-const Title = styled.h1`
-  font-size: 58px;
-  margin-bottom: 20px;
-`;
-const Overview = styled.p`
-  font-size: 20px;
 `;
 const SliderNow = styled.div`
   position: relative;
@@ -67,33 +60,6 @@ const MovieDetailOverview = styled.p`
   padding: 20px 20px;
   position: relative;
   top: -20px;
-`;
-const Btn = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-const PlayBtn = styled(motion.button)`
-  margin-right: 10px;
-  position: relative;
-  display: inline-block;
-  width: 100px;
-  height: 40px;
-  top: 10px;
-  font-size: 20px;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-`;
-const MoreInfoBtn = styled(motion.button)`
-  position: relative;
-  display: inline-block;
-  width: 150px;
-  height: 40px;
-  top: 10px;
-  font-size: 20px;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
 `;
 const SliderInfo = styled.span`
   font-size: 25px;

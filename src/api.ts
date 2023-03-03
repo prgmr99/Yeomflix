@@ -82,7 +82,7 @@ export function getTopTvs() {
 
 export function getSearchData(keyword: string) {
   return fetch(
-    `${BASE_PATH}/search/movie?api_key=${API_KEY}&query=${keyword}&language=en-US`
+    `${BASE_PATH}/search/movie?api_key=${API_KEY}&query=${keyword}&language=en-US&include_adult=false`
   ).then((response) => response.json());
 }
 

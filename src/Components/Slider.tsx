@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { useNavigate, useMatch, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { makeImgPath } from "../utils";
 import { IGetTopMoviesResult, IGetTvOnAir } from "../api";
 import { useRecoilValue } from "recoil";
@@ -133,13 +133,16 @@ function Slider({
     }
   };
   const onBoxClicked = (movieId: number) => {
+    console.log("home success!");
     navigate(`/movies/${movieId}`);
   };
   const onTvBoxClicked = (tvId: number) => {
+    console.log("tv success!");
     navigate(`/tv/shows/${tvId}`);
   };
   const onSearchBoxClicked = (movieId: number) => {
-    navigate(`/search?query=${query}/${movieId}`);
+    console.log("search success!");
+    navigate(`/search/query=${query}/${movieId}`);
   };
   const increaseIndex = () => {
     if (data) {
@@ -160,7 +163,6 @@ function Slider({
   };
   return (
     <Slider0>
-      {" "}
       {index === 0 ? null : (
         <LeftBtn
           onClick={decreaseIndex}

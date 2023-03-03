@@ -5,14 +5,10 @@ import {
   IGetMoviesResult,
   getTopMovies,
   IGetTopMoviesResult,
-  getVideoMovie,
-  IGetVideo,
 } from "../api";
 import { makeImgPath } from "../utils";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useNavigate, useMatch } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { idState } from "../atom";
 import Slider from "../Components/Slider";
 import Banner from "../Components/Banner";
 
@@ -114,7 +110,6 @@ function Home() {
   const onOverlayClicked = () => {
     navigate("/");
   };
-  console.log(bigMovieMatch?.params.movieId);
   return (
     <Wrapper>
       {nowLoading && topLoading ? (
