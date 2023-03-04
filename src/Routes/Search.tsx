@@ -100,10 +100,8 @@ function Search() {
       (movie) => movie.id + "" === bigMovieMatch.params.movieId
     );
   const onOverlayClicked = () => {
-    navigate(`/search`);
+    navigate(`/search/query=${query}`);
   };
-  console.log(bigMovieMatch?.params.movieId);
-  console.log(searchData);
   return (
     <Wrapper>
       {searchLoading ? (

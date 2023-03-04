@@ -128,7 +128,7 @@ function Slider({
     if (location?.pathname === "/tv") {
       onTvBoxClicked(movieId);
     }
-    if (location?.pathname === "/search") {
+    if (location?.pathname === `/search/query=${query}`) {
       onSearchBoxClicked(movieId);
     }
   };

@@ -107,6 +107,7 @@ function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const homeMatch = useMatch("/");
   const tvMatch = useMatch("tv");
+  const infMatch = useMatch("infinite");
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
   const navigate = useNavigate();
@@ -128,9 +129,9 @@ function Header() {
   };
   const onValid = (data: IForm) => {
     setKeyword(data.query);
-    navigate(`/search?query=${data.query}`);
+    navigate(`/search/query=${data.query}`);
   };
-
+  console.log(keyword);
   useEffect(() => {
     scrollY.onChange(() => {
       if (scrollY.get() < 80) {
@@ -165,6 +166,11 @@ function Header() {
           <Item>
             <Link to="/tv">
               Tv Shows {tvMatch && <Circle layoutId="circle" />}
+            </Link>
+          </Item>
+          <Item>
+            <Link to="/infinite">
+              Infinite Test {infMatch && <Circle layoutId="circle" />}
             </Link>
           </Item>
         </Items>

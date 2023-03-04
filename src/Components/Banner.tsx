@@ -14,6 +14,9 @@ interface IBanner {
 
 const Loader = styled.div`
   height: 20vh;
+  position: absolute;
+  top: 0;
+  left: 0;
   display: flex;
   text-align: center;
   justify-content: center;
@@ -101,8 +104,8 @@ function Banner({ data, category }: IBanner) {
       ) : movieVideo?.results.length === 0 ? null : (
         <Youtube
           style={{ position: "absolute", left: "50vw", top: "35vh" }}
-          videoId={movieVideo?.results[movieVideo?.results.length - 2].key}
-          key={movieVideo?.results[movieVideo?.results.length - 2].key}
+          videoId={movieVideo?.results[movieVideo?.results.length - 1].key}
+          key={movieVideo?.results[movieVideo?.results.length - 1].key}
           opts={{
             height: "350vh",
             width: "600vw",

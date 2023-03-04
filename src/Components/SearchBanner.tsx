@@ -75,8 +75,6 @@ function SearchBanner({ data, category, keyword }: ISearchBanner) {
     ["movieVideo", `video_${data?.results[0].id}`],
     () => getVideoMovie(data?.results[0].id)
   );
-  /* console.log(keyword);
-  console.log(data); */
   return (
     <BannerWrap bgPhoto={makeImgPath(data?.results[0].backdrop_path || "")}>
       <Title>{data?.results[0].title}</Title>

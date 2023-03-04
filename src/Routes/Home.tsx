@@ -110,6 +110,7 @@ function Home() {
   const onOverlayClicked = () => {
     navigate("/");
   };
+
   return (
     <Wrapper>
       {nowLoading && topLoading ? (
