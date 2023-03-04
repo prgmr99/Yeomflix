@@ -131,7 +131,6 @@ function Header() {
     setKeyword(data.query);
     navigate(`/search/query=${data.query}`);
   };
-  console.log(keyword);
   useEffect(() => {
     scrollY.onChange(() => {
       if (scrollY.get() < 80) {

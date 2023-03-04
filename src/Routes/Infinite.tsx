@@ -1,5 +1,28 @@
+import styled from "styled-components";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useQuery } from "react-query";
+import { IGetMoviesResult, getMovies } from "../api";
+import { makeImgPath } from "../utils";
 import "./Infinite.css";
+
+const Box = styled.div<{ bgPhoto: string }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  margin: 10px;
+  padding: 16px;
+  font-weight: 600;
+  text-align: center;
+  border-radius: 16px;
+  width: 120px;
+  background: rgba(255, 255, 255, 0.05);
+  background-image: url(${(data) => data.bgPhoto});
+  background-size: cover;
+  background-position: center center;
+  font-weight: 600;
+  font-size: 18px;
+`;
 
 const InfiniteLooper = function InfiniteLooper({
   speed,
@@ -82,25 +105,32 @@ const InfiniteLooper = function InfiniteLooper({
 };
 
 function Infinite() {
+  const { data, isLoading } = useQuery<IGetMoviesResult>(
+    ["movies", "nowPlaying"],
+    getMovies
+  );
+  console.log(data);
   return (
     <div className="app">
       <p className="description">
         Just throw some content into the component and set the speed and
         direction.
       </p>
+      {isLoading ? null : (
+        <div>
+          <InfiniteLooper speed={10} direction="right">
+            {data?.results.map((movie) => (
+              <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
+            ))}
+          </InfiniteLooper>
 
-      <InfiniteLooper speed={4} direction="right">
-        <div className="contentBlock contentBlock--one">
-          Place the stuff you want to loop
+          <InfiniteLooper direction="right" speed={0.4}>
+            <div className="contentBlock contentBlock--two">
+              <span>faster 🚀</span>
+            </div>
+          </InfiniteLooper>
         </div>
-        <div className="contentBlock contentBlock--one">right here</div>
-      </InfiniteLooper>
-
-      <InfiniteLooper direction="right" speed={0.4}>
-        <div className="contentBlock contentBlock--two">
-          <i>faster 🚀</i>
-        </div>
-      </InfiniteLooper>
+      )}
     </div>
   );
 }
