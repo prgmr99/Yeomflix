@@ -62,9 +62,27 @@ export function getTopMovies() {
   ).then((response) => response.json());
 }
 
+export function getTopMovies2() {
+  return fetch(
+    `${BASE_PATH}/movie/top_rated?api_key=${API_KEY}&page=2&include_adult=false&language=en-US`
+  ).then((response) => response.json());
+}
+
+export function getTopMovies3() {
+  return fetch(
+    `${BASE_PATH}/movie/top_rated?api_key=${API_KEY}&page=3&include_adult=false&language=en-US`
+  ).then((response) => response.json());
+}
+
 export function getLastestMovies() {
   return fetch(
     `${BASE_PATH}/movie/lastest?api_key=${API_KEY}&page=1&include_adult=false&language=en-US`
+  ).then((response) => response.json());
+}
+
+export function getPopularMovies() {
+  return fetch(
+    `${BASE_PATH}/movie/popular?api_key=${API_KEY}&page=2&include_adult=false&language=en-US&region=kr`
   ).then((response) => response.json());
 }
 

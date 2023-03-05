@@ -1,10 +1,22 @@
 import styled from "styled-components";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery } from "react-query";
-import { IGetMoviesResult, getMovies } from "../api";
+import {
+  IGetMoviesResult,
+  getMovies,
+  IGetTopMoviesResult,
+  getTopMovies,
+  getPopularMovies,
+  getTopMovies2,
+  getTopMovies3,
+} from "../api";
 import { makeImgPath } from "../utils";
 import "./Infinite.css";
 
+const Wrapper = styled.div`
+  margin-top: 10vh;
+  height: 200vh;
+`;
 const Box = styled.div<{ bgPhoto: string }>`
   display: flex;
   align-items: center;
@@ -15,7 +27,7 @@ const Box = styled.div<{ bgPhoto: string }>`
   font-weight: 600;
   text-align: center;
   border-radius: 16px;
-  width: 120px;
+  width: 220px;
   background: rgba(255, 255, 255, 0.05);
   background-image: url(${(data) => data.bgPhoto});
   background-size: cover;
@@ -105,33 +117,54 @@ const InfiniteLooper = function InfiniteLooper({
 };
 
 function Infinite() {
-  const { data, isLoading } = useQuery<IGetMoviesResult>(
+  const { data: nowMovie, isLoading: nowLoading } = useQuery<IGetMoviesResult>(
     ["movies", "nowPlaying"],
     getMovies
   );
-  console.log(data);
+  const { data: topMovie, isLoading: topLoading } =
+    useQuery<IGetTopMoviesResult>(["topmovies", "top"], getTopMovies);
+  const { data: topMovie2, isLoading: topLoading2 } =
+    useQuery<IGetTopMoviesResult>(["topmovies2", "top2"], getTopMovies2);
+  const { data: popMovie, isLoading: popLoading } =
+    useQuery<IGetTopMoviesResult>(["popmovies", "pop"], getPopularMovies);
+  const { data: topMovie3, isLoading: topLoading3 } =
+    useQuery<IGetTopMoviesResult>(["topmovies3", "top3"], getTopMovies3);
   return (
-    <div className="app">
-      <p className="description">
-        Just throw some content into the component and set the speed and
-        direction.
-      </p>
-      {isLoading ? null : (
+    <Wrapper>
+      {nowLoading &&
+      topLoading &&
+      popLoading &&
+      topLoading2 &&
+      topLoading3 ? null : (
         <div>
-          <InfiniteLooper speed={10} direction="right">
-            {data?.results.map((movie) => (
+          <InfiniteLooper speed={15} direction="right">
+            {nowMovie?.results.map((movie) => (
               <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
             ))}
           </InfiniteLooper>
-
-          <InfiniteLooper direction="right" speed={0.4}>
-            <div className="contentBlock contentBlock--two">
-              <span>faster 🚀</span>
-            </div>
+          <InfiniteLooper speed={20} direction="right">
+            {topMovie?.results.map((movie) => (
+              <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
+            ))}
+          </InfiniteLooper>
+          <InfiniteLooper speed={17} direction="right">
+            {topMovie2?.results.map((movie) => (
+              <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
+            ))}
+          </InfiniteLooper>
+          <InfiniteLooper speed={16} direction="right">
+            {topMovie3?.results.map((movie) => (
+              <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
+            ))}
+          </InfiniteLooper>
+          <InfiniteLooper speed={18} direction="right">
+            {popMovie?.results.map((movie) => (
+              <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
+            ))}
           </InfiniteLooper>
         </div>
       )}
-    </div>
+    </Wrapper>
   );
 }
 export default Infinite;
