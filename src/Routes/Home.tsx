@@ -1,173 +1,170 @@
 import styled from "styled-components";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery } from "react-query";
 import {
-  getMovies,
   IGetMoviesResult,
-  getTopMovies,
+  getMovies,
   IGetTopMoviesResult,
+  getTopMovies,
+  getPopularMovies,
+  getTopMovies2,
+  getTopMovies3,
 } from "../api";
 import { makeImgPath } from "../utils";
-import { motion, AnimatePresence, useScroll } from "framer-motion";
-import { useNavigate, useMatch } from "react-router-dom";
-import Slider from "../Components/Slider";
-import Banner from "../Components/Banner";
+import "./Home.css";
 
 const Wrapper = styled.div`
-  height: 200vh;
-  background-color: black;
+  margin-top: 10vh;
+  height: 100vh;
 `;
-const Loader = styled.div`
-  height: 20vh;
+const Box = styled.div<{ bgPhoto: string }>`
   display: flex;
-  text-align: center;
-  justify-content: center;
   align-items: center;
-`;
-const SliderNow = styled.div`
-  position: relative;
-  top: -100px;
-`;
-const SliderTop = styled.div`
-  position: relative;
-  top: 100px;
-`;
-const Overlay = styled(motion.div)`
-  position: absolute;
-  top: 0;
-  width: 100%;
-  height: 200vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-`;
-const MovieDetail = styled(motion.div)`
-  position: absolute;
-  width: 40vw;
-  height: 80vh;
-  background-color: ${(props) => props.theme.black.veryDark};
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-`;
-const MovieDetailImg = styled.div`
-  width: 100%;
-  height: 320px;
+  justify-content: center;
+  height: 120px;
+  margin: 10px;
+  padding: 16px;
+  font-weight: 600;
+  text-align: center;
+  border-radius: 16px;
+  width: 220px;
+  background: rgba(255, 255, 255, 0.05);
+  background-image: url(${(data) => data.bgPhoto});
   background-size: cover;
   background-position: center center;
-`;
-const MovieDetailTitle = styled.h2`
-  color: ${(props) => props.theme.white.lighter};
-  font-size: 28px;
-  position: relative;
-  top: -50px;
-  padding: 10px;
-`;
-const MovieDetailOverview = styled.p`
-  padding: 20px 20px;
-  position: relative;
-  top: -20px;
-`;
-const SliderInfo = styled.span`
-  font-size: 25px;
-  margin-left: 10px;
-  margin-bottom: 5px;
-  font-weight: 500;
-`;
-const LikeBtn = styled(motion.button)`
-  position: relative;
-  top: -30px;
-  left: 20px;
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-  background-color: ${(props) => props.theme.white.darker};
-  border: 2px solid grey;
-  cursor: pointer;
-`;
-const BtnArea = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+  font-weight: 600;
+  font-size: 18px;
 `;
 
+const InfiniteLooper = function InfiniteLooper({
+  speed,
+  direction,
+  children,
+}: {
+  speed: number;
+  direction: "right" | "left";
+  children: React.ReactNode;
+}) {
+  const [looperInstances, setLooperInstances] = useState(1);
+  const outerRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+
+  function resetAnimation() {
+    if (innerRef?.current) {
+      innerRef.current.setAttribute("data-animate", "false");
+
+      setTimeout(() => {
+        if (innerRef?.current) {
+          innerRef.current.setAttribute("data-animate", "true");
+        }
+      }, 10);
+    }
+  }
+
+  const setupInstances = useCallback(() => {
+    if (!innerRef?.current || !outerRef?.current) return;
+
+    const { width } = innerRef.current.getBoundingClientRect();
+
+    const { width: parentWidth } = outerRef.current.getBoundingClientRect();
+
+    const widthDeficit = parentWidth - width;
+
+    const instanceWidth = width / innerRef.current.children.length;
+
+    if (widthDeficit) {
+      setLooperInstances(
+        looperInstances + Math.ceil(widthDeficit / instanceWidth) + 1
+      );
+    }
+
+    resetAnimation();
+  }, [looperInstances]);
+
+  /*
+    6 instances, 200 each = 1200
+    parent = 1700
+  */
+
+  useEffect(() => setupInstances(), [setupInstances]);
+
+  useEffect(() => {
+    window.addEventListener("resize", setupInstances);
+
+    return () => {
+      window.removeEventListener("resize", setupInstances);
+    };
+  }, [looperInstances, setupInstances]);
+
+  return (
+    <div className="looper" ref={outerRef}>
+      <div className="looper__innerList" ref={innerRef} data-animate="true">
+        {[...Array(looperInstances)].map((_, ind) => (
+          <div
+            key={ind}
+            className="looper__listInstance"
+            style={{
+              animationDuration: `${speed}s`,
+              animationDirection: direction === "right" ? "reverse" : "normal",
+            }}
+          >
+            {children}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 function Home() {
-  const navigate = useNavigate();
-  const { scrollY } = useScroll();
-  const bigMovieMatch = useMatch("/movies/:movieId");
   const { data: nowMovie, isLoading: nowLoading } = useQuery<IGetMoviesResult>(
     ["movies", "nowPlaying"],
     getMovies
   );
   const { data: topMovie, isLoading: topLoading } =
     useQuery<IGetTopMoviesResult>(["topmovies", "top"], getTopMovies);
-  const clickedMovie =
-    (bigMovieMatch?.params.movieId &&
-      nowMovie?.results.find(
-        (movie) => movie.id + "" === bigMovieMatch.params.movieId
-      )) ||
-    topMovie?.results.find(
-      (movie) => movie.id + "" === bigMovieMatch?.params.movieId
-    );
-  const onOverlayClicked = () => {
-    navigate("/");
-  };
-
+  const { data: topMovie2, isLoading: topLoading2 } =
+    useQuery<IGetTopMoviesResult>(["topmovies2", "top2"], getTopMovies2);
+  const { data: popMovie, isLoading: popLoading } =
+    useQuery<IGetTopMoviesResult>(["popmovies", "pop"], getPopularMovies);
+  const { data: topMovie3, isLoading: topLoading3 } =
+    useQuery<IGetTopMoviesResult>(["topmovies3", "top3"], getTopMovies3);
   return (
     <Wrapper>
-      {nowLoading && topLoading ? (
-        <Loader>Loading...</Loader>
-      ) : (
-        <>
-          <Banner data={nowMovie} category="movie" />
-          <SliderNow>
-            <SliderInfo>Now playing</SliderInfo>
-            <Slider data={nowMovie as IGetMoviesResult} />
-          </SliderNow>
-          <SliderTop>
-            <SliderInfo>Top Rated</SliderInfo>
-            <Slider data={topMovie as IGetTopMoviesResult} />
-          </SliderTop>
-          <AnimatePresence>
-            {bigMovieMatch ? (
-              <>
-                <Overlay
-                  onClick={onOverlayClicked}
-                  exit={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                />
-                <MovieDetail
-                  style={{ top: scrollY.get() + 80 }}
-                  layoutId={bigMovieMatch.params.movieId}
-                >
-                  {clickedMovie && (
-                    <>
-                      <MovieDetailImg
-                        style={{
-                          backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImgPath(
-                            clickedMovie.backdrop_path,
-                            "w500"
-                          )})`,
-                        }}
-                      />
-                      <MovieDetailTitle>{clickedMovie.title}</MovieDetailTitle>
-                      <BtnArea>
-                        <LikeBtn>❤️</LikeBtn>
-                        <LikeBtn>저장</LikeBtn>
-                        <LikeBtn>리뷰</LikeBtn>
-                        <LikeBtn>평점</LikeBtn>
-                      </BtnArea>
-                      <MovieDetailOverview>
-                        {clickedMovie.overview}
-                      </MovieDetailOverview>
-                    </>
-                  )}
-                </MovieDetail>
-              </>
-            ) : null}
-          </AnimatePresence>
-        </>
+      {nowLoading &&
+      topLoading &&
+      popLoading &&
+      topLoading2 &&
+      topLoading3 ? null : (
+        <div>
+          <InfiniteLooper speed={15} direction="right">
+            {nowMovie?.results.map((movie) => (
+              <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
+            ))}
+          </InfiniteLooper>
+          <InfiniteLooper speed={20} direction="right">
+            {topMovie?.results.map((movie) => (
+              <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
+            ))}
+          </InfiniteLooper>
+          <InfiniteLooper speed={17} direction="right">
+            {topMovie2?.results.map((movie) => (
+              <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
+            ))}
+          </InfiniteLooper>
+          <InfiniteLooper speed={16} direction="right">
+            {topMovie3?.results.map((movie) => (
+              <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
+            ))}
+          </InfiniteLooper>
+          <InfiniteLooper speed={18} direction="right">
+            {popMovie?.results.map((movie) => (
+              <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
+            ))}
+          </InfiniteLooper>
+        </div>
       )}
     </Wrapper>
   );
 }
-
 export default Home;

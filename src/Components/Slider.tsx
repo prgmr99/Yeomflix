@@ -122,7 +122,7 @@ function Slider({
     }),
   };
   const whichBoxClicked = (movieId: number) => {
-    if (location?.pathname === "/") {
+    if (location?.pathname === "/movie") {
       onBoxClicked(movieId);
     }
     if (location?.pathname === "/tv") {

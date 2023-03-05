@@ -105,9 +105,9 @@ const navVarients = {
 function Header() {
   const [keyword, setKeyword] = useRecoilState(keywordState);
   const [searchOpen, setSearchOpen] = useState(false);
-  const homeMatch = useMatch("/");
+  const homeMatch = useMatch("movie");
   const tvMatch = useMatch("tv");
-  const infMatch = useMatch("infinite");
+  const infMatch = useMatch("/");
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
   const navigate = useNavigate();
@@ -160,16 +160,16 @@ function Header() {
         </Logo>
         <Items>
           <Item>
-            <Link to="/">Home {homeMatch && <Circle layoutId="circle" />}</Link>
+            <Link to="/">Home {infMatch && <Circle layoutId="circle" />}</Link>
+          </Item>
+          <Item>
+            <Link to="/movie">
+              Movie {homeMatch && <Circle layoutId="circle" />}
+            </Link>
           </Item>
           <Item>
             <Link to="/tv">
               Tv Shows {tvMatch && <Circle layoutId="circle" />}
-            </Link>
-          </Item>
-          <Item>
-            <Link to="/infinite">
-              Infinite Test {infMatch && <Circle layoutId="circle" />}
             </Link>
           </Item>
         </Items>
