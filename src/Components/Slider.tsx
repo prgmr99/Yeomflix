@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { makeImgPath } from "../utils";
-import { IGetTopMoviesResult, IGetTvOnAir } from "../api";
+import { IGetMoviesResult, IGetTopMoviesResult, IGetTvOnAir } from "../api";
 import { useRecoilValue } from "recoil";
 import { keywordState } from "../atom";
 
@@ -99,7 +99,10 @@ const offset = 6;
 
 function Slider({
   data,
-}: { data: IGetTopMoviesResult } | { data: IGetTvOnAir }) {
+}:
+  | { data: IGetTopMoviesResult }
+  | { data: IGetTvOnAir }
+  | { data: IGetMoviesResult }) {
   const navigate = useNavigate();
   const location = useLocation();
   const query = useRecoilValue(keywordState);

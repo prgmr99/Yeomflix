@@ -5,6 +5,8 @@ import {
   IGetMoviesResult,
   getTopMovies,
   IGetTopMoviesResult,
+  getPopularMovies,
+  getUpcomingMovies,
 } from "../api";
 import { makeImgPath } from "../utils";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
@@ -13,7 +15,7 @@ import Slider from "../Components/Slider";
 import Banner from "../Components/Banner";
 
 const Wrapper = styled.div`
-  height: 200vh;
+  height: 205vh;
   background-color: black;
 `;
 const Loader = styled.div`
@@ -30,6 +32,14 @@ const SliderNow = styled.div`
 const SliderTop = styled.div`
   position: relative;
   top: 100px;
+`;
+const SliderPop = styled.div`
+  position: relative;
+  top: 300px;
+`;
+const SliderUp = styled.div`
+  position: relative;
+  top: 500px;
 `;
 const Overlay = styled(motion.div)`
   position: absolute;
@@ -99,12 +109,25 @@ function Movie() {
   );
   const { data: topMovie, isLoading: topLoading } =
     useQuery<IGetTopMoviesResult>(["topmovies", "top"], getTopMovies);
+  const { data: popMovie, isLoading: popLoading } =
+    useQuery<IGetTopMoviesResult>(["popmovies", "pop"], getPopularMovies);
+  const { data: upMovie, isLoading: upLoading } = useQuery<IGetMoviesResult>(
+    ["upmovies", "up"],
+    getUpcomingMovies
+  );
+  console.log(upMovie);
   const clickedMovie =
     (bigMovieMatch?.params.movieId &&
       nowMovie?.results.find(
         (movie) => movie.id + "" === bigMovieMatch.params.movieId
       )) ||
     topMovie?.results.find(
+      (movie) => movie.id + "" === bigMovieMatch?.params.movieId
+    ) ||
+    popMovie?.results.find(
+      (movie) => movie.id + "" === bigMovieMatch?.params.movieId
+    ) ||
+    upMovie?.results.find(
       (movie) => movie.id + "" === bigMovieMatch?.params.movieId
     );
   const onOverlayClicked = () => {
@@ -113,7 +136,7 @@ function Movie() {
 
   return (
     <Wrapper>
-      {nowLoading && topLoading ? (
+      {nowLoading && topLoading && popLoading && upLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
@@ -126,6 +149,14 @@ function Movie() {
             <SliderInfo>Top Rated</SliderInfo>
             <Slider data={topMovie as IGetTopMoviesResult} />
           </SliderTop>
+          <SliderPop>
+            <SliderInfo>Popular</SliderInfo>
+            <Slider data={popMovie as IGetTopMoviesResult} />
+          </SliderPop>
+          <SliderUp>
+            <SliderInfo>Upcoming</SliderInfo>
+            <Slider data={upMovie as IGetMoviesResult} />
+          </SliderUp>
           <AnimatePresence>
             {bigMovieMatch ? (
               <>

@@ -137,27 +137,27 @@ function Home() {
       topLoading2 &&
       topLoading3 ? null : (
         <div>
-          <InfiniteLooper speed={15} direction="right">
+          <InfiniteLooper speed={75} direction="right">
             {nowMovie?.results.map((movie) => (
               <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
             ))}
           </InfiniteLooper>
-          <InfiniteLooper speed={20} direction="right">
+          <InfiniteLooper speed={70} direction="right">
             {topMovie?.results.map((movie) => (
               <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
             ))}
           </InfiniteLooper>
-          <InfiniteLooper speed={17} direction="right">
+          <InfiniteLooper speed={80} direction="right">
             {topMovie2?.results.map((movie) => (
               <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
             ))}
           </InfiniteLooper>
-          <InfiniteLooper speed={16} direction="right">
+          <InfiniteLooper speed={71} direction="right">
             {topMovie3?.results.map((movie) => (
               <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
             ))}
           </InfiniteLooper>
-          <InfiniteLooper speed={18} direction="right">
+          <InfiniteLooper speed={73} direction="right">
             {popMovie?.results.map((movie) => (
               <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
             ))}

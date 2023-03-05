@@ -14,13 +14,13 @@ function App() {
     <Router>
       <Header />
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/movie" element={<Movie />} />
         <Route path="/movies/:id" element={<Movie />} />
         <Route path="/tv" element={<Tv />} />
         <Route path="/tv/shows/:id" element={<Tv />} />
         <Route path={`/search/query=${query}`} element={<Search />} />
         <Route path={`/search/query=${query}/:id`} element={<Search />} />
-        <Route path="/" element={<Home />} />
       </Routes>
     </Router>
   );

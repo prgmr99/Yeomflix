@@ -45,7 +45,6 @@ body {
   flex-direction: column;
 }
 #root {
-  flex: 1;
   font-family: sans-serif;
   color: var(--offwhite);
   background: linear-gradient(-45deg, #4c468b, #05031a);

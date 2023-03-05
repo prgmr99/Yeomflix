@@ -1,6 +1,12 @@
 import styled from "styled-components";
 import { useQuery } from "react-query";
-import { IGetTvOnAir, getTvOnAir, getTopTvs } from "../api";
+import {
+  IGetTvOnAir,
+  getTvOnAir,
+  getTopTvs,
+  getPopTvs,
+  getAirTodayTvs,
+} from "../api";
 import { makeImgPath } from "../utils";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useNavigate, useMatch } from "react-router-dom";
@@ -8,7 +14,7 @@ import Slider from "../Components/Slider";
 import TvBanner from "../Components/TvBanner";
 
 const Wrapper = styled.div`
-  height: 200vh;
+  height: 205vh;
   background-color: black;
 `;
 const Loader = styled.div`
@@ -25,6 +31,14 @@ const SliderNow = styled.div`
 const SliderTop = styled.div`
   position: relative;
   top: 100px;
+`;
+const SliderPop = styled.div`
+  position: relative;
+  top: 300px;
+`;
+const SliderToday = styled.div`
+  position: relative;
+  top: 500px;
 `;
 const Overlay = styled(motion.div)`
   position: absolute;
@@ -95,17 +109,25 @@ function Home() {
     ["topTvs", "topLoading"],
     getTopTvs
   );
+  const { data: popTv, isLoading: popLoading } = useQuery<IGetTvOnAir>(
+    ["popTvs", "popLoading"],
+    getPopTvs
+  );
+  const { data: airTodayTv, isLoading: airTodayLoading } =
+    useQuery<IGetTvOnAir>(["todayTvs", "todayLoading"], getAirTodayTvs);
   const { scrollY } = useScroll();
   const clickedMovie =
     (bigTvMatch?.params.tvId &&
       airTv?.results.find((tv) => tv.id + "" === bigTvMatch.params.tvId)) ||
-    topTv?.results.find((tv) => tv.id + "" === bigTvMatch?.params.tvId);
+    topTv?.results.find((tv) => tv.id + "" === bigTvMatch?.params.tvId) ||
+    popTv?.results.find((tv) => tv.id + "" === bigTvMatch?.params.tvId) ||
+    airTodayTv?.results.find((tv) => tv.id + "" === bigTvMatch?.params.tvId);
   const onOverlayClicked = () => {
     navigate("/tv");
   };
   return (
     <Wrapper>
-      {airLoading && topLoading ? (
+      {airLoading && topLoading && popLoading && airTodayLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
@@ -118,6 +140,14 @@ function Home() {
             <SliderInfo>Top Rated</SliderInfo>
             <Slider data={topTv as IGetTvOnAir} />
           </SliderTop>
+          <SliderPop>
+            <SliderInfo>Popular</SliderInfo>
+            <Slider data={popTv as IGetTvOnAir} />
+          </SliderPop>
+          <SliderToday>
+            <SliderInfo>Popular</SliderInfo>
+            <Slider data={airTodayTv as IGetTvOnAir} />
+          </SliderToday>
           <AnimatePresence>
             {bigTvMatch ? (
               <>
