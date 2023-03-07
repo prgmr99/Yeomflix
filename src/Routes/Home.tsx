@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { useQuery } from "react-query";
 import {
   IGetMoviesResult,
@@ -11,6 +11,8 @@ import {
   getTopMovies3,
 } from "../api";
 import { makeImgPath } from "../utils";
+import { looperState } from "../atom";
+import { useRecoilState } from "recoil";
 import "./Home.css";
 
 const Wrapper = styled.div`
@@ -45,7 +47,7 @@ const InfiniteLooper = function InfiniteLooper({
   direction: "right" | "left";
   children: React.ReactNode;
 }) {
-  const [looperInstances, setLooperInstances] = useState(1);
+  const [looperInstances, setLooperInstances] = useRecoilState(looperState);
   const outerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
 
@@ -70,24 +72,22 @@ const InfiniteLooper = function InfiniteLooper({
 
     const widthDeficit = parentWidth - width;
 
-    const instanceWidth = width / innerRef.current.children.length;
+    const instanceWidth = width / innerRef?.current?.children.length;
 
     if (widthDeficit) {
-      setLooperInstances(
-        looperInstances + Math.ceil(widthDeficit / instanceWidth) + 1
-      );
+      if (instanceWidth) {
+        setLooperInstances(
+          looperInstances + Math.ceil(widthDeficit / instanceWidth) + 1
+        );
+      }
     }
-
+    console.log(instanceWidth);
     resetAnimation();
   }, [looperInstances]);
 
-  /*
-    6 instances, 200 each = 1200
-    parent = 1700
-  */
-
   useEffect(() => setupInstances(), [setupInstances]);
-
+  // 이 코드가 새로고침에 영향을 주는 구나. 나이스!
+  // 근데 이 코드가 없으면 Infinite이 되지 않음.
   useEffect(() => {
     window.addEventListener("resize", setupInstances);
 
@@ -95,7 +95,8 @@ const InfiniteLooper = function InfiniteLooper({
       window.removeEventListener("resize", setupInstances);
     };
   }, [looperInstances, setupInstances]);
-
+  console.log(innerRef.current?.children);
+  console.log(looperInstances);
   return (
     <div className="looper" ref={outerRef}>
       <div className="looper__innerList" ref={innerRef} data-animate="true">
@@ -137,27 +138,27 @@ function Home() {
       topLoading2 &&
       topLoading3 ? null : (
         <div>
-          <InfiniteLooper speed={75} direction="right">
+          <InfiniteLooper speed={71} direction="right">
             {nowMovie?.results.map((movie) => (
               <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
             ))}
           </InfiniteLooper>
-          <InfiniteLooper speed={70} direction="right">
+          <InfiniteLooper speed={100} direction="right">
             {topMovie?.results.map((movie) => (
               <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
             ))}
           </InfiniteLooper>
-          <InfiniteLooper speed={80} direction="right">
+          <InfiniteLooper speed={50} direction="right">
             {topMovie2?.results.map((movie) => (
               <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
             ))}
           </InfiniteLooper>
-          <InfiniteLooper speed={71} direction="right">
+          <InfiniteLooper speed={90} direction="right">
             {topMovie3?.results.map((movie) => (
               <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
             ))}
           </InfiniteLooper>
-          <InfiniteLooper speed={73} direction="right">
+          <InfiniteLooper speed={80} direction="right">
             {popMovie?.results.map((movie) => (
               <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>
             ))}

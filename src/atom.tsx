@@ -9,8 +9,8 @@ export const keywordState = atom({
   effects_UNSTABLE: [persistAtom],
 });
 
-export const idState = atom({
-  key: "id",
-  default: 0,
+export const looperState = atom({
+  key: "looperInstances",
+  default: 1,
   effects_UNSTABLE: [persistAtom],
 });

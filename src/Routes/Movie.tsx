@@ -115,7 +115,6 @@ function Movie() {
     ["upmovies", "up"],
     getUpcomingMovies
   );
-  console.log(upMovie);
   const clickedMovie =
     (bigMovieMatch?.params.movieId &&
       nowMovie?.results.find(
