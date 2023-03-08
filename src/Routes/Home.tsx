@@ -81,7 +81,6 @@ const InfiniteLooper = function InfiniteLooper({
         );
       }
     }
-    console.log(instanceWidth);
     resetAnimation();
   }, [looperInstances]);
 
@@ -95,8 +94,7 @@ const InfiniteLooper = function InfiniteLooper({
       window.removeEventListener("resize", setupInstances);
     };
   }, [looperInstances, setupInstances]);
-  console.log(innerRef.current?.children);
-  console.log(looperInstances);
+
   return (
     <div className="looper" ref={outerRef}>
       <div className="looper__innerList" ref={innerRef} data-animate="true">

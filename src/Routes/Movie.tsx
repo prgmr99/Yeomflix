@@ -183,7 +183,7 @@ function Movie() {
                         <LikeBtn>❤️</LikeBtn>
                         <LikeBtn>저장</LikeBtn>
                         <LikeBtn>리뷰</LikeBtn>
-                        <LikeBtn>평점</LikeBtn>
+                        <LikeBtn>{clickedMovie.vote_average}</LikeBtn>
                       </BtnArea>
                       <MovieDetailOverview>
                         {clickedMovie.overview}

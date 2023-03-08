@@ -11,6 +11,7 @@ interface IMovie {
   title: string;
   overview: string;
   original_name?: string;
+  vote_average: number;
 }
 interface ITv {
   id: number;
@@ -19,6 +20,7 @@ interface ITv {
   original_name: string;
   overview: string;
   title?: string;
+  vote_average?: number;
 }
 interface IVideoMovie {
   key: string;
