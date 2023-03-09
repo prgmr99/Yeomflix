@@ -12,6 +12,7 @@ interface IMovie {
   overview: string;
   original_name?: string;
   vote_average: number;
+  release_date: string;
 }
 interface ITv {
   id: number;
@@ -21,6 +22,7 @@ interface ITv {
   overview: string;
   title?: string;
   vote_average?: number;
+  release_date: string;
 }
 interface IVideoMovie {
   key: string;
@@ -139,5 +141,11 @@ export function getVideoMovie(movieId?: number) {
 export function getVideoTv(tvId?: number) {
   return fetch(
     `${BASE_PATH}/movie/${tvId}/videos?api_key=${API_KEY}&language=ko-KR`
+  ).then((response) => response.json());
+}
+
+export function getMovieDetail(movieId?: number) {
+  return fetch(
+    `${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}&language=ko-KR`
   ).then((response) => response.json());
 }

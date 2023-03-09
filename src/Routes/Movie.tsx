@@ -98,6 +98,33 @@ const BtnArea = styled.div`
   flex-direction: row;
   align-items: center;
 `;
+const Date = styled.div`
+  display: flex;
+  position: absolute;
+  top: 45vh;
+  left: 28vw;
+  font-weight: bold;
+`;
+const Svg = styled.svg`
+  path {
+    stroke: #323232;
+    stroke-width: 5;
+  }
+`;
+
+const icon = {
+  hidden: {
+    pathLength: 0,
+    fill: "rgba(255, 255, 255, 0)",
+  },
+  visible: {
+    pathLength: 1,
+    fill: "rgba(50, 50, 50, 1)",
+    transition: {
+      duration: 4,
+    },
+  },
+};
 
 function Movie() {
   const navigate = useNavigate();
@@ -132,7 +159,7 @@ function Movie() {
   const onOverlayClicked = () => {
     navigate("/movie");
   };
-
+  console.log(clickedMovie);
   return (
     <Wrapper>
       {nowLoading && topLoading && popLoading && upLoading ? (
@@ -181,9 +208,27 @@ function Movie() {
                       <MovieDetailTitle>{clickedMovie.title}</MovieDetailTitle>
                       <BtnArea>
                         <LikeBtn>❤️</LikeBtn>
-                        <LikeBtn>저장</LikeBtn>
-                        <LikeBtn>리뷰</LikeBtn>
+                        <LikeBtn>
+                          <Svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 100 100"
+                            stroke="white"
+                          >
+                            <motion.path
+                              d="M0 100V0l50 50 50-50v100L75 75l-25 25-25-25z"
+                              variants={icon}
+                              initial="hidden"
+                              animate="visible"
+                              transition={{
+                                default: { duration: 4 },
+                                fill: { duration: 2, delay: 1 },
+                              }}
+                              fill="transparent"
+                            />
+                          </Svg>
+                        </LikeBtn>
                         <LikeBtn>{clickedMovie.vote_average}</LikeBtn>
+                        <Date>Release: {clickedMovie.release_date}</Date>
                       </BtnArea>
                       <MovieDetailOverview>
                         {clickedMovie.overview}
