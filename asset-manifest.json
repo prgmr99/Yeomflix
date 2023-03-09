@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/Yeomflix/static/css/main.9f3359a5.css",
+    "main.js": "/Yeomflix/static/js/main.2ba80eb0.js",
+    "index.html": "/Yeomflix/index.html",
+    "main.9f3359a5.css.map": "/Yeomflix/static/css/main.9f3359a5.css.map",
+    "main.2ba80eb0.js.map": "/Yeomflix/static/js/main.2ba80eb0.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9f3359a5.css",
+    "static/js/main.2ba80eb0.js"
+  ]
+}
