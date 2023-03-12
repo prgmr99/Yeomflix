@@ -6,6 +6,7 @@ import { useRecoilValue } from "recoil";
 import { keywordState } from "../atom";
 import { getSearchData, IGetMoviesResult } from "../api";
 import { makeImgPath } from "../utils";
+import { Helmet } from "react-helmet-async";
 import Slider from "../Components/Slider";
 import SearchBanner from "../Components/SearchBanner";
 
@@ -104,6 +105,9 @@ function Search() {
   };
   return (
     <Wrapper>
+      <Helmet>
+        <title>Search</title>
+      </Helmet>
       {searchLoading ? (
         <Loader>Loading...</Loader>
       ) : (

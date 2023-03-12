@@ -12,6 +12,7 @@ import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useNavigate, useMatch } from "react-router-dom";
 import Slider from "../Components/Slider";
 import TvBanner from "../Components/TvBanner";
+import { Helmet } from "react-helmet-async";
 
 const Wrapper = styled.div`
   height: 205vh;
@@ -127,6 +128,9 @@ function Home() {
   };
   return (
     <Wrapper>
+      <Helmet>
+        <title>Tv Shows</title>
+      </Helmet>
       {airLoading && topLoading && popLoading && airTodayLoading ? (
         <Loader>Loading...</Loader>
       ) : (

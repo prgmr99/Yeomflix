@@ -11,7 +11,7 @@ import Home from "./Routes/Home";
 function App() {
   const query = useRecoilValue(keywordState);
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />

@@ -13,6 +13,7 @@ import {
 import { makeImgPath } from "../utils";
 import { looperState } from "../atom";
 import { useRecoilState } from "recoil";
+import { Helmet } from "react-helmet-async";
 import "./Home.css";
 
 const Wrapper = styled.div`
@@ -136,6 +137,9 @@ function Home() {
       topLoading2 &&
       topLoading3 ? null : (
         <div>
+          <Helmet>
+            <title>Home</title>
+          </Helmet>
           <InfiniteLooper speed={71} direction="right">
             {nowMovie?.results.map((movie) => (
               <Box bgPhoto={makeImgPath(movie.backdrop_path, "w500")}></Box>

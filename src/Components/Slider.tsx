@@ -164,6 +164,7 @@ function Slider({
       setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
     }
   };
+  console.log(data.results[2].backdrop_path);
   return (
     <Slider0>
       {index === 0 ? null : (
@@ -206,7 +207,11 @@ function Slider({
                 onClick={() => {
                   whichBoxClicked(movie.id);
                 }}
-                bgPhoto={makeImgPath(movie.backdrop_path, "w400")}
+                bgPhoto={
+                  movie.backdrop_path
+                    ? makeImgPath(movie.backdrop_path, "w400")
+                    : "https://i.ibb.co/VCKVxQG/no-image.jpg"
+                }
               >
                 <Info variants={infoVariants}>
                   <h4>

@@ -13,6 +13,7 @@ import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useNavigate, useMatch } from "react-router-dom";
 import Slider from "../Components/Slider";
 import Banner from "../Components/Banner";
+import { Helmet } from "react-helmet-async";
 
 const Wrapper = styled.div`
   height: 205vh;
@@ -162,6 +163,9 @@ function Movie() {
   console.log(clickedMovie);
   return (
     <Wrapper>
+      <Helmet>
+        <title>Movie</title>
+      </Helmet>
       {nowLoading && topLoading && popLoading && upLoading ? (
         <Loader>Loading...</Loader>
       ) : (
