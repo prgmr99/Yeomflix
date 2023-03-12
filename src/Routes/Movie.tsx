@@ -160,7 +160,6 @@ function Movie() {
   const onOverlayClicked = () => {
     navigate("/movie");
   };
-  console.log(clickedMovie);
   return (
     <Wrapper>
       <Helmet>

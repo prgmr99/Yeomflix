@@ -164,7 +164,6 @@ function Slider({
       setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
     }
   };
-  console.log(data.results[2].backdrop_path);
   return (
     <Slider0>
       {index === 0 ? null : (
