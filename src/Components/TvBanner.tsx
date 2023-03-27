@@ -73,7 +73,7 @@ function TvBanner({ data, category }: ITvBanner) {
     ["tvVideo", `video_${data?.results[0].id}`],
     () => getVideoTv(data?.results[0].id)
   );
-
+  console.log(tvVideo);
   return (
     <BannerWrap bgPhoto={makeImgPath(data?.results[0].backdrop_path || "")}>
       <Title>{data?.results[0].name}</Title>

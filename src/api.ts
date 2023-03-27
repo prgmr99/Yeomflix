@@ -140,7 +140,7 @@ export function getVideoMovie(movieId?: number) {
 
 export function getVideoTv(tvId?: number) {
   return fetch(
-    `${BASE_PATH}/movie/${tvId}/videos?api_key=${API_KEY}&language=en-US`
+    `${BASE_PATH}/tv/${tvId}/videos?api_key=${API_KEY}&language=en-US`
   ).then((response) => response.json());
 }
 
