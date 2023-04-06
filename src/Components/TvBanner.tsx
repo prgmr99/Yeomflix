@@ -89,18 +89,7 @@ function TvBanner({ data, category }: ITvBanner) {
       </Btn>
       {category === "tv" && videoLoading ? (
         <Loader>Loading...</Loader>
-      ) : tvVideo?.results.length === 0 ? null : (
-        <Youtube
-          style={{ position: "absolute", left: "50vw", top: "35vh" }}
-          videoId={tvVideo?.results[tvVideo?.results.length - 2].key}
-          key={tvVideo?.results[tvVideo?.results.length - 2].key}
-          opts={{
-            height: "300vh",
-            width: "500vw",
-            playerVars: { autoplay: 1, modestbranding: 1, rel: 0 },
-          }}
-        />
-      )}
+      ) : tvVideo?.results.length === 0 ? null : null}
     </BannerWrap>
   );
 }
