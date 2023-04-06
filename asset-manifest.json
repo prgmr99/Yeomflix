@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/Yeomflix/static/css/main.9f3359a5.css",
-    "main.js": "/Yeomflix/static/js/main.c32b3050.js",
+    "main.js": "/Yeomflix/static/js/main.69ebf09b.js",
     "index.html": "/Yeomflix/index.html",
     "main.9f3359a5.css.map": "/Yeomflix/static/css/main.9f3359a5.css.map",
-    "main.c32b3050.js.map": "/Yeomflix/static/js/main.c32b3050.js.map"
+    "main.69ebf09b.js.map": "/Yeomflix/static/js/main.69ebf09b.js.map"
   },
   "entrypoints": [
     "static/css/main.9f3359a5.css",
-    "static/js/main.c32b3050.js"
+    "static/js/main.69ebf09b.js"
   ]
 }
