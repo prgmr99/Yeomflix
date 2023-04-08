@@ -73,7 +73,7 @@
     </li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
+    <!--<li><a href="#license">License</a></li>-->
     <!--<li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>-->
   </ol>
@@ -83,14 +83,13 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
 <img width="1438" alt="image" src="https://user-images.githubusercontent.com/76275691/230398613-e1966d13-299a-4eda-99d0-052ada513d22.png">
 <img width="1440" alt="image" src="https://user-images.githubusercontent.com/76275691/230399202-9f233977-9799-42fb-901e-8aeea96a67ea.png">
-Clone Netflix by using what I have learned.
 
-Goals:
+
+### Goals:
 * Review React Router, React Query, Framer motion, Recoil, and etc.
-
+* Clone Netflix by using what I have learned.
 <!--Use the `BLANK_README.md` to get started.-->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
